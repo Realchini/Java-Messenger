@@ -66,4 +66,18 @@ public class MessageParser extends DefaultHandler {
         }
         LOGGER.trace(">");
     }
+
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        if ("message". equals(qName)) {
+            Long newId = Long.valueOf(id.getAndIncrement());
+            if (message.getId() == null) {
+                message.setId(newId);
+            }
+            else {
+                newId = message.getId();
+                id.set(newId.intValue());
+            }
+        }
+    }
 }
