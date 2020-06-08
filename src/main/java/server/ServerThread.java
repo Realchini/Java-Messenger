@@ -53,6 +53,10 @@ public class ServerThread extends Thread{
                     DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
                     Document document = builder.newDocument();
                     String xmlContent = MessageBuilder.buildDocument(document, messagesList.values());
+                    LOGGER.trace("Echoing: "+xmlContent);
+                    out.println(xmlContent);
+                    out.println("END");
+                    out.flush();
                     break;
                 case "PUT":
                     break;
