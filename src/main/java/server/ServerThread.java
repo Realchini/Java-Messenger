@@ -2,14 +2,20 @@ package server;
 
 import domain.Message;
 import domain.xml.MessageBuilder;
+import domain.xml.MessageParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,6 +55,7 @@ public class ServerThread extends Thread{
                             .map(Map.Entry::getValue)
                             .collect(Collectors.toList());
                     LOGGER.debug(newMessages);
+
                     DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
                     DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
                     Document document = builder.newDocument();
@@ -58,8 +65,32 @@ public class ServerThread extends Thread{
                     out.println("END");
                     out.flush();
                     break;
+
                 case "PUT":
+                    LOGGER.debug("put");
+                    requestLine = in.readLine();
+                    StringBuilder mesStr = new StringBuilder();
+                    while(!"END".equals(requestLine)) {
+                        mesStr.append(requestLine);
+                        requestLine = in.readLine();
+                    }
+                    LOGGER.debug(mesStr);
+
+                    SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+                    SAXParser parser = saxParserFactory.newSAXParser();
+                    List<Message> messages = new ArrayList<>();
+                    MessageParser saxp = new MessageParser(messageId, messages);
+                    InputStream is = new ByteArrayInputStream(mesStr.toString().getBytes());
+                    parser.parse(is, saxp);
+                    for (Message message: messages) {
+                        messagesList.put(message.getId(), message);
+                    }
+                    LOGGER.trace("Echoing: "+ messages);
+                    out.println("OK");
+                    out.flush();
+                    out.close();
                     break;
+                    
                 default:
                     break;
             }
