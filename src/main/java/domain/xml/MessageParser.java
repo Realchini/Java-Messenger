@@ -21,6 +21,11 @@ public class MessageParser extends DefaultHandler {
     private AtomicInteger id;
     private String thisElement;
 
+    public MessageParser(AtomicInteger id, List<Message> messages) {
+        this.id = id;
+        this.messages = messages;
+    }
+
     @Override
     public void startDocument() throws SAXException {
         super.startDocument();

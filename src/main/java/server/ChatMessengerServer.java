@@ -9,12 +9,13 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,6 +23,7 @@ public class ChatMessengerServer {
     final static Logger LOGGER = LogManager.getLogger(ChatMessengerServer.class)
     private static final int PORT = 7070;
     private static final int SERVER_TIMEOUT = 500;
+    private static final String XML_FILE_NAME = "resources/messages.xml";
     private static volatile boolean stop = false;
     private static AtomicInteger id = new AtomicInteger(0);
     private static Map<Long, Message> messagesList = Collections.synchronizedSortedMap(new TreeMap<Long, Message>());
@@ -59,11 +61,18 @@ public class ChatMessengerServer {
         serverSocket.close();
     }
 
-    private static void loadMessageXMLFile() throws ParserConfigurationException, SAXException {
+    private static void loadMessageXMLFile() throws ParserConfigurationException, SAXException, IOException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser parser = factory.newSAXParser();
         List<Message> messages = new ArrayList<>();
         MessageParser saxp = new MessageParser(id, messages);
+        InputStream is = new ByteArrayInputStream(Files.readAllBytes(Paths.get(XML_FILE_NAME)));
+        parser.parse(is, saxp);
+        for (Message message: messages) {
+            messagesList.put(message.getId(), message);
+        }
+        id.incrementAndGet();
+        is.close();
     }
 
     private static void quitCommandThread() {
