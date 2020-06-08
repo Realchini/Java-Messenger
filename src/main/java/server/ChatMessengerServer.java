@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatMessengerServer {
-    final static Logger LOGGER = LogManager.getLogger(ChatMessengerServer.class)
+    final static Logger LOGGER = LogManager.getLogger(ChatMessengerServer.class);
     private static final int PORT = 7070;
     private static final int SERVER_TIMEOUT = 500;
     private static final String XML_FILE_NAME = "resources/messages.xml";
@@ -66,7 +66,7 @@ public class ChatMessengerServer {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.newDocument();
-        String xmlContent = MessageBuilder.buildDocument(document, ,messagesList.values());
+        String xmlContent = MessageBuilder.buildDocument(document, messagesList.values()); //////// здесь была ошибка
 
         OutputStream stream = new FileOutputStream(new File(XML_FILE_NAME));
         OutputStreamWriter out = new OutputStreamWriter(stream, StandardCharsets.UTF_8);
