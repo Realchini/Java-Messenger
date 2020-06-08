@@ -78,6 +78,26 @@ public class MessageParser extends DefaultHandler {
                 newId = message.getId();
                 id.set(newId.intValue());
             }
+            LOGGER.debug("id = "+newId);
+            messages.add(message);
         }
+        thisElement = "";
+        LOGGER.debug("End Element");
+        LOGGER.trace("</"+qName+">");
+    }
+
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        if ("message".equals(thisElement)) {
+            String messBody = new String(ch, start, length).trim();
+            LOGGER.trace(messBody);
+            message.setText(messBody);
+        }
+    }
+
+    @Override
+    public void endDocument() throws SAXException {
+        super.endDocument();
+        LOGGER.debug("End document");
     }
 }
