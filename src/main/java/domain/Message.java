@@ -1,5 +1,7 @@
 package domain;
 
+import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
@@ -9,6 +11,10 @@ public class Message implements Serializable, Comparable<Message> {
     private String text;
     private String userNameFrom, userNameTo;
     private Calendar moment;
+
+    public static Builder newMessage() {
+        return new Builder();
+    }
 
     public Long getId() {
         return id;
@@ -50,6 +56,16 @@ public class Message implements Serializable, Comparable<Message> {
         this.moment = moment;
     }
 
+    private Message() {}
+
+    private Message(Builder builder) {
+        setId(builder.id);
+        setText(builder.text);
+        setUserNameFrom(builder.userNameFrom);
+        setUserNameTo(builder.userNameTo);
+        setMoment(builder.moment);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -72,5 +88,43 @@ public class Message implements Serializable, Comparable<Message> {
             return getId().compareTo(o.getId());
         else return getMoment().compareTo(o.getMoment());
         // return 0;
+    }
+
+    public static class Builder {
+        private Long id;
+        private String text;
+        private String userNameFrom, userNameTo;
+        private Calendar moment;
+
+        private Builder() {}
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder text(String text) {
+            this.text = text;
+            return this;
+        }
+
+        public Builder from(String userNameFrom) {
+            this.userNameFrom = userNameFrom;
+            return this;
+        }
+
+        public Builder to(String userNameTo) {
+            this.userNameTo = userNameTo;
+            return this;
+        }
+
+        public Builder moment(Calendar moment) {
+            this.moment = moment;
+            return this;
+        }
+
+        public Message build() {
+            return new Message(this);
+        }
     }
 }

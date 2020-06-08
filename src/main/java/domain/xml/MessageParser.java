@@ -30,5 +30,9 @@ public class MessageParser extends DefaultHandler {
         thisElement = qName;
         LOGGER.debug("Start Element");
         LOGGER.trace("<" + qName);
+        if ("message".equals(qName)) {
+            message = Message.newMessage().build();
+        }
+        LOGGER.trace(">");
     }
 }
