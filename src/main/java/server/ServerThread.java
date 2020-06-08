@@ -27,6 +27,15 @@ public class ServerThread extends Thread{
     private final Socket socket;
     private final AtomicInteger messageId;
     private final Map<Long, Message> messagesList;
+
+    public AtomicInteger getMessageId() {
+        return messageId;
+    }
+
+    public Map<Long, Message> getMessagesList() {
+        return messagesList;
+    }
+
     private final BufferedReader in;
     private final PrintWriter out;
 
@@ -90,14 +99,27 @@ public class ServerThread extends Thread{
                     out.flush();
                     out.close();
                     break;
-                    
+
                 default:
+                    LOGGER.info("Unknown request: "+requestLine);
+                    out.println("BAD REQUEST");
+                    out.flush();
                     break;
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             out.println("ERROR");
             out.flush();
+        } finally {
+            try {
+                LOGGER.debug("Socket closing...");
+                LOGGER.debug("Close stream objects");
+                in.close();
+                out.close();
+                socket.close();
+            } catch(IOException e) {
+                LOGGER.error("Socket not closed");
+            }
         }
     }
 }
