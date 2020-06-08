@@ -1,8 +1,10 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Objects;
 
-public class Message {
+public class Message implements Serializable, Comparable<Message> {
     private Long id;
     private String text;
     private String userNameFrom, userNameTo;
@@ -46,5 +48,29 @@ public class Message {
 
     public void setMoment(Calendar moment) {
         this.moment = moment;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Message)) return false;
+        Message message = (Message) o;
+        return getId().equals(message.getId()) &&
+                getText().equals(message.getText()) &&
+                getUserNameFrom().equals(message.getUserNameFrom()) &&
+                getUserNameTo().equals(message.getUserNameTo()) &&
+                getMoment().equals(message.getMoment());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getText(), getUserNameFrom(), getUserNameTo(), getMoment());
+    }
+
+    public int compareTo(Message o) {
+        if (getMoment().equals(o.getMoment()))
+            return getId().compareTo(o.getId());
+        else return getMoment().compareTo(o.getMoment());
+        // return 0;
     }
 }
