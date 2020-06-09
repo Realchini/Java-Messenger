@@ -47,11 +47,15 @@ public class ChatPanelView extends AbstractView{
 
     @Override
     public void clearFields() {
-
+        getMessagesTextPane().setText("");
+        getTextMessageField().setText("");
     }
 
-    public void initModel() {
-
+    public void initModel(boolean getMessages) {
+        parent.getModel().setLastMessageText("");
+        if(getMessages) {
+            getMessagesTextPane().setText(parent.getModel().messagesToString());
+        }
     }
 
     public JScrollPane getMessagesListPanel() {
