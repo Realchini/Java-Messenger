@@ -24,7 +24,8 @@ public class ChatMessengerServer {
     final static Logger LOGGER = LogManager.getLogger(ChatMessengerServer.class);
     private static final int PORT = 7070;
     private static final int SERVER_TIMEOUT = 500;
-    private static final String XML_FILE_NAME = "resources/messages.xml";
+    //private static final String XML_FILE_NAME = "resources/messages.xml";
+    private static final String XML_FILE_NAME = "messages.xml";
     private static volatile boolean stop = false;
     private static AtomicInteger id = new AtomicInteger(0);
     private static Map<Long, Message> messagesList = Collections.synchronizedSortedMap(new TreeMap<Long, Message>());
