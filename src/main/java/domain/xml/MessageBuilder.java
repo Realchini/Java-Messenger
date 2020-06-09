@@ -25,7 +25,7 @@ public class MessageBuilder {
         // Create DOM of XML document
         Element rootElement = document.createElement("messages");
         document.appendChild(rootElement);
-        LOGGER.trace("Create root element: "+rootElement.toString());
+        LOGGER.trace("Create root element: "+rootElement.getTagName());
         for (Message message: messagesList) {
             Element messageElement = document.createElement("message");
             rootElement.appendChild(messageElement);
@@ -38,7 +38,7 @@ public class MessageBuilder {
             messageElement.setAttribute("moment", (new SimpleDateFormat("HH:mm:ss dd-MM-yyyy"))
                     .format(message.getMoment().getTime()));
             messageElement.appendChild(document.createTextNode(message.getText()));
-            LOGGER.trace("Create message element: "+messageElement.toString());
+            LOGGER.trace("Create message element: "+messageElement.getTagName());
         }
 
         //XML document string format and setting up coding page
