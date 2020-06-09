@@ -3,6 +3,7 @@ package domain;
 import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -88,6 +89,20 @@ public class Message implements Serializable, Comparable<Message> {
             return getId().compareTo(o.getId());
         else return getMoment().compareTo(o.getMoment());
         // return 0;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder("<p><b>")
+                .append(userNameFrom)
+                .append((userNameTo.length()!=0) ? (" -> " + userNameTo) : "")
+                .append(":</b><br /> <message>")
+                .append(text)
+                .append("</message><br /> <div style='alight=right; font-size:small;'>")
+                .append((new SimpleDateFormat("HH:mm:ss dd-MMM-yyyy"))
+                .format(moment.getTime().getTime()))
+                .append("</div><br /></p>")
+                .toString();
     }
 
     public static class Builder {
