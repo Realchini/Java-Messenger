@@ -23,7 +23,7 @@ public class ViewFactory {
         instances.put(name, view);
     }
 
-    private <T extends AbstractView> T getView(String name) {
+    public <T extends AbstractView> T getView(String name) {
         return (T) instances.get(name);
     }
 }

@@ -30,6 +30,12 @@ public class ChatMessengerAppl extends JFrame {
         initialize();
     }
 
+    public static void main(String[] args) {
+        JFrame frame = new ChatMessengerAppl();
+        frame.setVisible(true);
+        frame.repaint();
+    }
+
     private void initialize() {
         AbstractView.setParent(this);
         MODEL.setParent(this);
@@ -46,6 +52,12 @@ public class ChatMessengerAppl extends JFrame {
         contentPanel.setLayout(new BorderLayout());
         contentPanel.add(getLoginPanelView(), BorderLayout.CENTER);
         this.setContentPane(contentPanel);
+    }
+
+    private String getLoginPanelView() {
+        LoginPanelView loginPanelView = VIEWS.getView("login");
+        loginPanelView.initModel();
+        return loginPanelView;
     }
 
     public static Model getModel() {
