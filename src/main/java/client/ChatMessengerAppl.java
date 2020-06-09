@@ -54,10 +54,16 @@ public class ChatMessengerAppl extends JFrame {
         this.setContentPane(contentPanel);
     }
 
-    private String getLoginPanelView() {
+    private JPanel getLoginPanelView() {
         LoginPanelView loginPanelView = VIEWS.getView("login");
         loginPanelView.initModel();
         return loginPanelView;
+    }
+
+    private JPanel getChatPanelView() {
+        ChatPanelView chatPanelView = VIEWS.getView("chat");
+        chatPanelView.initModel();
+        return chatPanelView;
     }
 
     public static Model getModel() {

@@ -1,6 +1,9 @@
 package client;
 
-public class Controller {
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Controller implements ActionListener {
     private ChatMessengerAppl parent;
     private Command command;
 
@@ -8,6 +11,11 @@ public class Controller {
     private Controller() {}
     public static Controller getInstance() {
         return ControllerHolder.INSTANCE;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
     }
 
     private static class ControllerHolder {
