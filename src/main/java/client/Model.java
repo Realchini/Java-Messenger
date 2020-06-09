@@ -22,6 +22,10 @@ public class Model {
         return ModelHolder.INSTANCE;
     }
 
+    public String messagesToString() {
+        return messages.toString();
+    }
+
     private static class ModelHolder {
         private static final Model INSTANCE = new Model();
     }

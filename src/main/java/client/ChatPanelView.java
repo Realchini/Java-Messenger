@@ -7,9 +7,11 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 
-public class ChatPanelView extends AbstractView{
+public class ChatPanelView extends AbstractView {
 
     final static Logger LOGGER = LogManager.getLogger(ChatPanelView.class);
+    public static final String SEND_ACTION_COMMAND = "send";
+    public static final String LOGOUT_ACTION_COMMAND = "logout";
 
     private JScrollPane messagesListPanel;
     private JTextPane messagesTextPane;
@@ -97,17 +99,28 @@ public class ChatPanelView extends AbstractView{
             sendMessageButton = new JButton();
             sendMessageButton.setText("Send");
             sendMessageButton.setName("sendMessageButton");
-            sendMessageButton.setActionCommand("send");
+            sendMessageButton.setActionCommand(SEND_ACTION_COMMAND);
             sendMessageButton.addActionListener(parent.getController());
         }
         return sendMessageButton;
     }
 
     public JTextField getTextMessageField() {
+        if(textMessageField == null) {
+            textMessageField = new JTextField(12);
+            textMessageField.setName("textMessageField");
+        }
         return textMessageField;
     }
 
     public JButton getLogoutButton() {
+        if (logoutButton == null) {
+            logoutButton = new JButton();
+            logoutButton.setText("Logout");
+            logoutButton.setName("logoutButton");
+            logoutButton.setActionCommand(LOGOUT_ACTION_COMMAND);
+            logoutButton.addActionListener(parent.getController());
+        }
         return logoutButton;
     }
 }
