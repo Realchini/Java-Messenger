@@ -43,7 +43,16 @@ public class LoginPanelView extends AbstractView {
 
     @Override
     public void clearFields() {
+        getErrorLabel().setVisible(false);
+        getUserNameField().setText("");
+        getServerIpAdressField().setText(parent.getModel().getServerIpAddress());
+    }
 
+    public void initModel() {
+        parent.getModel().setCurrentUser("");
+        parent.getModel().setLoggedUser("");
+        getUserNameField().requestFocusInWindow();
+        parent.getRootPane().setDefaultButton(getLoginButton());
     }
 
     public JPanel getLoginPanel() {
@@ -77,15 +86,33 @@ public class LoginPanelView extends AbstractView {
         return loginButton;
     }
 
+
+
     public JTextField getUserNameField() {
+        if (userNameField == null) {
+            userNameField = new JTextField(12);
+            userNameField.setName("userNameField");
+        }
         return userNameField;
     }
 
     public JTextField getServerIpAdressField() {
+        if (serverIpAdressField == null) {
+            serverIpAdressField = new JTextField(12);
+            serverIpAdressField.setName("serverIpAdressField");
+        }
         return serverIpAdressField;
     }
 
     public JLabel getErrorLabel() {
+        if (errorLabel == null) {
+            errorLabel = new JLabel("Wrong server ip adress or user name");
+            errorLabel.setForeground(Color.red);
+        }
         return errorLabel;
+    }
+
+    private void setErrorLabelText (String errorText) {
+        getErrorLabel().setText(errorText);
     }
 }
