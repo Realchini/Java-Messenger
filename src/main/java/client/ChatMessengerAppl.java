@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Timer;
 
 public class ChatMessengerAppl extends JFrame {
@@ -39,6 +40,27 @@ public class ChatMessengerAppl extends JFrame {
         timer = new Timer("Server request for update messages");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
-        
+        this.setLocationRelativeTo(null);
+        this.setTitle("Chat Messenger");
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BorderLayout());
+        contentPanel.add(getLoginPanelView(), BorderLayout.CENTER);
+        this.setContentPane(contentPanel);
+    }
+
+    public static Model getModel() {
+        return MODEL;
+    }
+
+    public static Controller getController() {
+        return CONTROLLER;
+    }
+
+    public static ViewFactory getViews() {
+        return VIEWS;
+    }
+
+    public Timer getTimer() {
+        return timer;
     }
 }
