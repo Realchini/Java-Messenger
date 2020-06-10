@@ -6,7 +6,9 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 
+import static client.ChatPanelView.*;
 import static client.LoginPanelView.LOGIN_ACTION_COMMAND;
 
 public class Controller implements ActionListener {
@@ -25,25 +27,46 @@ public class Controller implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        action(e);
+        try {
+            action(e);
+        } catch (ParseException parseException) {
+            LOGGER.error(parseException.getMessage());
+        }
         command.execute();
     }
 
-    private void action(ActionEvent e) {
+    private void action(ActionEvent e) throws ParseException {
         String commandName = e.getActionCommand();
         switch (commandName) {
-            case LOGIN_ACTION_COMMAND:
+            case LOGIN_ACTION_COMMAND: {
                 LoginPanelView view = Utility.findParent(
-                        (Component)e.getSource(), LoginPanelView.class);
-                if(! EmailValidator.getInstance().isValid(view.getUserNameField().getText()) ||
-                   ! InetAddressValidator.getInstance().isValid(view.getServerIpAdressField().getText())) {
+                        (Component) e.getSource(), LoginPanelView.class);
+                if (!EmailValidator.getInstance().isValid(view.getUserNameField().getText()) ||
+                        !InetAddressValidator.getInstance().isValid(view.getServerIpAdressField().getText())) {
                     command = new LoginErrorCommand(view);
                 } else {
                     parent.getModel().setCurrentUser(view.getUserNameField().getText());
                     parent.getModel().setServerIpAddress(view.getServerIpAdressField().getText());
                     command = new ShowChatViewCommand(parent, view);
-                    
                 }
+            }
+                break;
+            case SEND_ACTION_COMMAND: {
+                ChatPanelView view = Utility.findParent(
+                        (Component) e.getSource(), ChatPanelView.class);
+                parent.getModel().setLastMessageText(view.getTextMessageField().getText());
+                command = new SendMessageCommand(parent, view);
+            }
+            break;
+            case LOGOUT_ACTION_COMMAND: {
+                ChatPanelView view = Utility.findParent(
+                        (Component) e.getSource(), ChatPanelView.class);
+                parent.getModel().initialize();
+                command = new ShowLoginViewCommand(parent, view);
+            }
+            break;
+            default:
+                throw new ParseException("Unknown command: "+commandName, 0);
         }
     }
 
