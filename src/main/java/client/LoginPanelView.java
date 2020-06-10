@@ -59,7 +59,7 @@ public class LoginPanelView extends AbstractView {
         if (loginPanel == null) {
             loginPanel = new JPanel();
             loginPanel.setLayout(new BorderLayout());
-            loginPanel.add(getMainPanel(), BorderLayout.CENTER);
+            loginPanel.add(getMainPanel(), BorderLayout.NORTH);
             addLabelField(getMainPanel(), "server ip-address:", getServerIpAdressField());
             addLabelField(getMainPanel(), "name of user:", getUserNameField());
             loginPanel.add(getLoginButton(), BorderLayout.SOUTH);
