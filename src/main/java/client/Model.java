@@ -29,7 +29,7 @@ public class Model {
 
     public void addMessages(List<Message> messages) {
         this.getMessages().addAll(messages);
-        parent.getChatPanelView(false).modelChangeedNotification(messages.toString());
+        parent.getChatPanelView(false).modelChangedNotification(messages.toString());
     }
 
     private static class ModelHolder {

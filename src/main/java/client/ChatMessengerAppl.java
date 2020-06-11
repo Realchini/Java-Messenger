@@ -87,4 +87,14 @@ public class ChatMessengerAppl extends JFrame {
     public void setTimer(Timer timer) {
         this.timer = timer;
     }
+
+    private void showPanel(JPanel panel) {
+        getContentPane().add(panel, BorderLayout.CENTER);
+        panel.setVisible(true);
+        panel.repaint();
+    }
+
+    public void showChatPanelView() {
+        showPanel(getChatPanelView(true));
+    }
 }

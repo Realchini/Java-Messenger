@@ -34,7 +34,7 @@ public class ChatPanelView extends AbstractView {
         return ChatPanelViewHolder.INSTANCE;
     }
 
-    public void modelChangeedNotification(String newMessages) {
+    public void modelChangedNotification(String newMessages) {
         if (newMessages.length() != 0) {
             LOGGER.trace("New messages arrived: "+newMessages);
             HTMLDocument document = (HTMLDocument)getMessagesTextPane().getStyledDocument();
