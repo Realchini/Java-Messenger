@@ -2,5 +2,7 @@
 <messages>
     <message id="1" moment="13:20:00 07-08-2020" receiver="You" sender="Me">Example message</message>
     <message id="2" moment="13:21:00 07-08-2020" receiver="Me" sender="You">Example return message</message>
+    <message id="3" moment="15:27:41 11-06-2020" receiver="" sender="i@i.ua">Hello!</message>
+    <message id="4" moment="15:29:45 11-06-2020" receiver="" sender="i@i.ua">where is PUT?</message>
 </messages>
 
