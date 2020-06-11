@@ -55,14 +55,16 @@ public class Controller implements ActionListener {
                 ChatPanelView view = Utility.findParent(
                         (Component) e.getSource(), ChatPanelView.class);
                 parent.getModel().setLastMessageText(view.getTextMessageField().getText());
-                command = new SendMessageCommand(parent, view);
+                /** TODO */
+                //command = new SendMessageCommand(parent, view);
             }
             break;
             case LOGOUT_ACTION_COMMAND: {
                 ChatPanelView view = Utility.findParent(
                         (Component) e.getSource(), ChatPanelView.class);
                 parent.getModel().initialize();
-                command = new ShowLoginViewCommand(parent, view);
+                /** TODO */
+                //command = new ShowLoginViewCommand(parent, view);
             }
             break;
             default:
