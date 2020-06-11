@@ -3,6 +3,7 @@ package client;
 import domain.Message;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -24,6 +25,11 @@ public class Model {
 
     public String messagesToString() {
         return messages.toString();
+    }
+
+    public void addMessages(List<Message> messages) {
+        this.getMessages().addAll(messages);
+        parent.getChatPanelView(false).modelChangeedNotification(messages.toString());
     }
 
     private static class ModelHolder {

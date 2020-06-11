@@ -4,8 +4,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
+import javax.swing.text.Element;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
 import java.awt.*;
+import java.io.IOException;
 
 public class ChatPanelView extends AbstractView {
 
@@ -27,6 +32,22 @@ public class ChatPanelView extends AbstractView {
 
     public static ChatPanelView getInstance() {
         return ChatPanelViewHolder.INSTANCE;
+    }
+
+    public void modelChangeedNotification(String newMessages) {
+        if (newMessages.length() != 0) {
+            LOGGER.trace("New messages arrived: "+newMessages);
+            HTMLDocument document = (HTMLDocument)getMessagesTextPane().getStyledDocument();
+            Element element = document.getElement(document.getRootElements()[0],
+                    HTML.Attribute.ID, "body");
+            try {
+                document.insertBeforeEnd(element, newMessages);
+            } catch (BadLocationException | IOException e) {
+                LOGGER.error("Bad location error: "+e.getMessage());
+            }
+            getMessagesTextPane().setCaretPosition(document.getLength());
+            LOGGER.trace("Messages text updated");
+        }
     }
 
     private static class ChatPanelViewHolder {

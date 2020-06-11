@@ -1,6 +1,7 @@
 package client;
 
 import domain.Message;
+import domain.xml.MessageParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
@@ -16,6 +17,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static server.ServerThread.END_LINE_MESSAGE;
@@ -65,7 +67,14 @@ public class Utility {
                     @Override
                     public String toString() {
                         return this.stream().map(Message::toString).collect(Collectors.joining("\n"));
-                    }
+                    } };
+                AtomicInteger id = new AtomicInteger(0);
+                MessageParser saxp = new MessageParser(id, messages);
+                parser.parse(new ByteArrayInputStream(mesStr.toString().getBytes()), saxp);
+                if (messages.size()>0) {
+                    model.addMessages(messages);
+                    model.setLastMessageId(id.longValue());
+                    LOGGER.trace("List of new messages: "+messages.toString());
                 }
 
             } catch (IOException e) {
