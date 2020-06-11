@@ -13,6 +13,7 @@ public class ShowChatViewCommand implements Command {
     @Override
     public void execute() {
         Utility.messagesUpdate(appl);
+        appl.getModel().setLoggedUser(view.getUserNameField().getText());
         view.clearFields();
         view.setVisible(false);
         appl.setTimer(new Timer());

@@ -71,7 +71,9 @@ public class ServerThread extends Thread{
                     DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
                     DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
                     Document document = builder.newDocument();
-                    String xmlContent = MessageBuilder.buildDocument(document, messagesList.values());
+
+                    //String xmlContent = MessageBuilder.buildDocument(document, messagesList.values());
+                    String xmlContent = MessageBuilder.buildDocument(document, newMessages);
                     LOGGER.trace("Echoing: "+xmlContent);
                     out.println(xmlContent);
                     out.println(END_LINE_MESSAGE);
