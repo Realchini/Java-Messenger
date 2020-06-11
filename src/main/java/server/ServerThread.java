@@ -23,6 +23,9 @@ import java.util.stream.Collectors;
 
 public class ServerThread extends Thread{
     final static Logger LOGGER = LogManager.getLogger(ServerThread.class);
+    public static final String METHOD_GET = "GET";
+    public static final String METHOD_PUT = "PUT";
+    public static final String END_LINE_MESSAGE = "END";
 
     private final Socket socket;
     private final AtomicInteger messageId;
@@ -55,7 +58,7 @@ public class ServerThread extends Thread{
             String requestLine = in.readLine();
             LOGGER.debug(requestLine);
             switch (requestLine) {
-                case "GET":
+                case METHOD_GET:
                     LOGGER.debug("get");
                     Long lastId = Long.valueOf(in.readLine());
                     LOGGER.debug(lastId);
@@ -71,15 +74,15 @@ public class ServerThread extends Thread{
                     String xmlContent = MessageBuilder.buildDocument(document, messagesList.values());
                     LOGGER.trace("Echoing: "+xmlContent);
                     out.println(xmlContent);
-                    out.println("END");
+                    out.println(END_LINE_MESSAGE);
                     out.flush();
                     break;
 
-                case "PUT":
+                case METHOD_PUT:
                     LOGGER.debug("put");
                     requestLine = in.readLine();
                     StringBuilder mesStr = new StringBuilder();
-                    while(!"END".equals(requestLine)) {
+                    while(! END_LINE_MESSAGE.equals(requestLine)) {
                         mesStr.append(requestLine);
                         requestLine = in.readLine();
                     }

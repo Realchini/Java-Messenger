@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatMessengerServer {
     final static Logger LOGGER = LogManager.getLogger(ChatMessengerServer.class);
-    private static final int PORT = 7070;
+    public static final int PORT = 7070;
     private static final int SERVER_TIMEOUT = 500;
     //private static final String XML_FILE_NAME = "resources/messages.xml";
     private static final String XML_FILE_NAME = "messages.xml";

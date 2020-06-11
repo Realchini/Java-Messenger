@@ -8,6 +8,8 @@ import java.awt.*;
 import java.util.Timer;
 
 public class ChatMessengerAppl extends JFrame {
+    public static final short DELAY = 100;
+    public static final short PERIOD = 1000;
     final static Logger LOGGER = LogManager.getLogger(ChatMessengerAppl.class);
 
     private static final Model MODEL;
@@ -80,5 +82,9 @@ public class ChatMessengerAppl extends JFrame {
 
     public Timer getTimer() {
         return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
     }
 }
