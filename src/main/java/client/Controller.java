@@ -63,8 +63,7 @@ public class Controller implements ActionListener {
                 ChatPanelView view = Utility.findParent(
                         (Component) e.getSource(), ChatPanelView.class);
                 parent.getModel().initialize();
-                /** TODO */
-                //command = new ShowLoginViewCommand(parent, view);
+                command = new ShowLoginViewCommand(parent, view);
             }
             break;
             default:

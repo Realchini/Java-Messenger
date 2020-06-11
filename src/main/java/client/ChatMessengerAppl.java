@@ -97,4 +97,8 @@ public class ChatMessengerAppl extends JFrame {
     public void showChatPanelView() {
         showPanel(getChatPanelView(true));
     }
+
+    public void showLoginPanelView() {
+        showPanel(getLoginPanelView());
+    }
 }
