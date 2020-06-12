@@ -15,19 +15,19 @@ public class ChatMessengerAppl extends JFrame {
     private static final Model MODEL;
     private static final Controller CONTROLLER;
     private static final ViewFactory VIEWS;
-    public static final int FRAME_WIDTH = 400;
+    public static final int FRAME_WIDTH = 600;
     public static final int FRAME_HEIGHT = 600;
 
     static {
         MODEL = Model.getInstance();
         CONTROLLER = Controller.getInstance();
         VIEWS = ViewFactory.getInstance();
-        LOGGER.trace("MVC instantiated: "+ MODEL + ";"  + CONTROLLER + ";" + VIEWS);
+        LOGGER.trace("MVC instantiated" + MODEL + ";" + CONTROLLER + ";" + VIEWS);
     }
 
     private Timer timer;
 
-    public ChatMessengerAppl() {
+    public ChatMessengerAppl(){
         super();
         initialize();
     }
@@ -36,6 +36,7 @@ public class ChatMessengerAppl extends JFrame {
         JFrame frame = new ChatMessengerAppl();
         frame.setVisible(true);
         frame.repaint();
+
     }
 
     private void initialize() {
@@ -47,7 +48,7 @@ public class ChatMessengerAppl extends JFrame {
         VIEWS.viewRegister("chat", ChatPanelView.getInstance());
         timer = new Timer("Server request for update messages");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+        this.setSize(FRAME_WIDTH / 2, FRAME_HEIGHT / 4);
         this.setLocationRelativeTo(null);
         this.setTitle("Chat Messenger");
         JPanel contentPanel = new JPanel();
@@ -56,13 +57,13 @@ public class ChatMessengerAppl extends JFrame {
         this.setContentPane(contentPanel);
     }
 
-    private JPanel getLoginPanelView() {
+    public LoginPanelView getLoginPanelView() {
         LoginPanelView loginPanelView = VIEWS.getView("login");
         loginPanelView.initModel();
-        return loginPanelView;
+        return  loginPanelView;
     }
 
-    ChatPanelView getChatPanelView(boolean doGetMessages) {
+    public ChatPanelView getChatPanelView(boolean doGetMessages) {
         ChatPanelView chatPanelView = VIEWS.getView("chat");
         chatPanelView.initModel(doGetMessages);
         return chatPanelView;
@@ -88,17 +89,26 @@ public class ChatMessengerAppl extends JFrame {
         this.timer = timer;
     }
 
-    private void showPanel(JPanel panel) {
+    private void showPanel(JPanel panel){
         getContentPane().add(panel, BorderLayout.CENTER);
         panel.setVisible(true);
         panel.repaint();
+
     }
 
     public void showChatPanelView() {
+        getChatPanelView(false).showMessages();
         showPanel(getChatPanelView(true));
+        this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+        this.setLocationRelativeTo(null);
     }
 
     public void showLoginPanelView() {
         showPanel(getLoginPanelView());
+        InputMap im = getLoginPanelView().getLoginButton().getInputMap();
+        im.put(KeyStroke.getKeyStroke("ENTER"), "pressed");
+        im.put(KeyStroke.getKeyStroke("released ENTER"), "released");
+        this.setSize(FRAME_WIDTH / 2, FRAME_HEIGHT/ 4);
+        this.setLocationRelativeTo(null);
     }
 }

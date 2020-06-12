@@ -2,22 +2,34 @@ package client;
 
 import domain.Message;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import javax.swing.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Model {
     private ChatMessengerAppl parent;
-    private String currentUser;
+    private String currentUSer;
     private String loggedUser;
     private String lastMessageText;
     private Set<Message> messages;
+    private DefaultListModel<String> users;
+
+    public DefaultListModel<String> getUsers() {
+        if(users.size() == 0){
+            users = new DefaultListModel<String>();
+        }
+        return users;
+    }
+
+    public void setUsers(DefaultListModel<String> users) {
+        this.users = users;
+        parent.getChatPanelView(false).updateUsers();
+    }
+
     private Long lastMessageId;
     private String serverIpAddress = "127.0.0.1";
 
-    // Singleton паттерн
-    private Model() {}
+    private Model(){}
 
     public static Model getInstance() {
         return ModelHolder.INSTANCE;
@@ -27,35 +39,54 @@ public class Model {
         return messages.toString();
     }
 
-    public void addMessages(List<Message> messages) {
-        this.getMessages().addAll(messages);
-        parent.getChatPanelView(false).modelChangedNotification(messages.toString());
+    //added by me
+    public String getFilteredStringOfMessages(Set<Message> messages){
+        return buildStringOfFilteredMessages(messages.stream().filter(p -> p.getUserNameTo().equals(getLoggedUser())
+                && p.getUserNameFrom().equals(getCurrentUSer())
+                || p.getUserNameTo().equals(getCurrentUSer())
+                && p.getUserNameFrom().equals(getLoggedUser())).
+                                       collect(Collectors.toSet()));
     }
 
-    private static class ModelHolder {
+    public String buildStringOfFilteredMessages(Set<Message> messages){
+        List<Message> messagesSorted = messages.stream().collect(Collectors.toList());
+        Collections.sort(messagesSorted, (x, y) -> x.getMoment().compareTo(y.getMoment()));
+        StringBuilder result = new StringBuilder("<html><body id = 'body'>");
+        for(Message message: messagesSorted){
+            result.append(message.toString()).append("\n");
+        }
+        return result.append("</body></html>").toString();
+    }
+
+    public void addMessages(List<Message> messages) {
+        this.getMessages().addAll(messages);
+        parent.getChatPanelView(false).getMessagesTextPane().setText(getFilteredStringOfMessages(getMessages()));
+    }
+    ////////////////
+
+    private static class  ModelHolder {
         private static final Model INSTANCE = new Model();
     }
 
-    // Setting up the model's field
-    public void initialize() {
+    public void initialize(){
         setMessages(new TreeSet<Message>(){
             @Override
             public String toString() {
-                StringBuilder result = new StringBuilder("<html><body id='body'>");
+                StringBuilder result = new StringBuilder("<html><body id = 'body'>");
                 Iterator<Message> i = iterator();
-                while(i.hasNext()) {
+                while (i.hasNext()){
                     result.append(i.next().toString()).append("\n");
                 }
                 return result.append("</body></html>").toString();
             }
         });
         lastMessageId = 0L;
-        currentUser = "";
+        currentUSer = "";
         loggedUser = "";
         lastMessageText = "";
     }
 
-    // геттеры и сеттеры
+    // getters and setters
     public ChatMessengerAppl getParent() {
         return parent;
     }
@@ -64,12 +95,12 @@ public class Model {
         this.parent = parent;
     }
 
-    public String getCurrentUser() {
-        return currentUser;
+    public String getCurrentUSer() {
+        return currentUSer;
     }
 
-    public void setCurrentUser(String currentUser) {
-        this.currentUser = currentUser;
+    public void setCurrentUSer(String currentUSer) {
+        this.currentUSer = currentUSer;
     }
 
     public String getLoggedUser() {

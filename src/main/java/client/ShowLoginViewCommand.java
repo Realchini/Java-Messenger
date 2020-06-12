@@ -3,8 +3,8 @@ package client;
 public class ShowLoginViewCommand implements Command {
     private ChatMessengerAppl appl;
     private ChatPanelView panel;
-
-    public ShowLoginViewCommand(ChatMessengerAppl parent, ChatPanelView view) {
+    public ShowLoginViewCommand(ChatMessengerAppl parent, ChatPanelView view)
+    {
         appl = parent;
         panel = view;
     }

@@ -11,5 +11,6 @@ public class UpdateMessageTask extends TimerTask {
     @Override
     public void run() {
         Utility.messagesUpdate(appl);
+        Utility.usersUpdate(appl);
     }
 }

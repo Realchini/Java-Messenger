@@ -15,60 +15,59 @@ public class Controller implements ActionListener {
     private ChatMessengerAppl parent;
     private Command command;
 
-    // Паттерн Синглтон
-    private Controller() {}
-    public static Controller getInstance() {
-        return ControllerHolder.INSTANCE;
+    private Controller(){}
+
+    private static class ControllerHolder{
+        private static final Controller INSTANCE = new Controller();
     }
 
-    private static class ControllerHolder {
-        private static final Controller INSTANCE = new Controller();
+    public static Controller getInstance() {
+        return ControllerHolder.INSTANCE;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
             action(e);
-        } catch (ParseException parseException) {
-            LOGGER.error(parseException.getMessage());
+        } catch (ParseException ex) {
+            LOGGER.error(ex.getMessage());
         }
         command.execute();
     }
 
     private void action(ActionEvent e) throws ParseException {
         String commandName = e.getActionCommand();
-        switch (commandName) {
+        switch (commandName){
             case LOGIN_ACTION_COMMAND: {
                 LoginPanelView view = Utility.findParent(
                         (Component) e.getSource(), LoginPanelView.class);
                 if (!EmailValidator.getInstance().isValid(view.getUserNameField().getText()) ||
-                        !InetAddressValidator.getInstance().isValid(view.getServerIpAdressField().getText())) {
+                        !InetAddressValidator.getInstance().isValid(view.getServerIpAddressField().getText())) {
                     command = new LoginErrorCommand(view);
                 } else {
-                    parent.getModel().setCurrentUser(view.getUserNameField().getText());
-                    parent.getModel().setServerIpAddress(view.getServerIpAdressField().getText());
-                    command = new ShowChatViewCommand(parent, view);
+                    parent.getModel().setCurrentUSer(view.getUserNameField().getText());
+                    parent.getModel().setServerIpAddress(view.getServerIpAddressField().getText());
+                   command = new ShowChatViewCommand(parent, view);
                 }
             }
                 break;
             case SEND_ACTION_COMMAND: {
-                ChatPanelView view = Utility.findParent(
-                        (Component) e.getSource(), ChatPanelView.class);
+                ChatPanelView view = Utility.findParent((Component) e.getSource(), ChatPanelView.class);
                 parent.getModel().setLastMessageText(view.getTextMessageField().getText());
                 command = new SendMessageCommand(parent, view);
             }
             break;
             case LOGOUT_ACTION_COMMAND: {
-                ChatPanelView view = Utility.findParent(
-                        (Component) e.getSource(), ChatPanelView.class);
+                ChatPanelView view = Utility.findParent((Component) e.getSource(), ChatPanelView.class);
                 parent.getModel().initialize();
                 command = new ShowLoginViewCommand(parent, view);
             }
             break;
             default:
-                throw new ParseException("Unknown command: "+commandName, 0);
+                throw new ParseException("Unknown command:" + commandName, 0);
         }
     }
+
 
     public void setParent(ChatMessengerAppl parent) {
         this.parent = parent;

@@ -7,18 +7,21 @@ public abstract class AbstractView extends JPanel {
     protected static ChatMessengerAppl parent;
 
     public static void setParent(ChatMessengerAppl parent) {
+
         AbstractView.parent = parent;
     }
 
-    public AbstractView() {
+
+
+    public AbstractView(){
         super();
     }
 
     public abstract void initialize();
     public abstract void clearFields();
-    //public abstract void initModel(boolean kek);
+    // public abstract void initModel();
 
-    protected void addLabelField(JPanel panel, String labelText, Component field) {
+    public void addLabeledField(JPanel panel, String labelText, Component field){
         JLabel label = new JLabel(labelText);
         label.setLabelFor(field);
         panel.add(label);

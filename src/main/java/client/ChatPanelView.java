@@ -4,20 +4,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
-import javax.swing.text.Element;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
 import java.awt.*;
-import java.io.IOException;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ChatPanelView extends AbstractView {
 
     final static Logger LOGGER = LogManager.getLogger(ChatPanelView.class);
     public static final String SEND_ACTION_COMMAND = "send";
     public static final String LOGOUT_ACTION_COMMAND = "logout";
-
     private JScrollPane messagesListPanel;
     private JTextPane messagesTextPane;
     private JPanel textMessagePanel;
@@ -25,8 +21,14 @@ public class ChatPanelView extends AbstractView {
     private JTextField textMessageField;
     private JButton logoutButton;
     private JLabel promptLabel;
+    // добавлено
+    private JScrollPane usersListPanel;
+    private JList usersList;
+    //public static String messagesTextPaneColor = "#CAC6FF";
+    //public static String usersListPaneColor = "#06005E";
+    //private static String headerColor = "#ABA5FF";
 
-    private ChatPanelView() {
+    private ChatPanelView(){
         super();
         initialize();
     }
@@ -35,21 +37,6 @@ public class ChatPanelView extends AbstractView {
         return ChatPanelViewHolder.INSTANCE;
     }
 
-    public void modelChangedNotification(String newMessages) {
-        if (newMessages.length() != 0) {
-            LOGGER.trace("New messages arrived: "+newMessages);
-            HTMLDocument document = (HTMLDocument)getMessagesTextPane().getStyledDocument();
-            Element element = document.getElement(document.getRootElements()[0],
-                    HTML.Attribute.ID, "body");
-            try {
-                document.insertBeforeEnd(element, newMessages);
-            } catch (BadLocationException | IOException e) {
-                LOGGER.error("Bad location error: "+e.getMessage());
-            }
-            getMessagesTextPane().setCaretPosition(document.getLength());
-            LOGGER.trace("Messages text updated");
-        }
-    }
 
     private static class ChatPanelViewHolder {
         private static final ChatPanelView INSTANCE = new ChatPanelView();
@@ -60,11 +47,16 @@ public class ChatPanelView extends AbstractView {
         this.setName("chatPanelView");
         this.setLayout(new BorderLayout());
         JPanel header = new JPanel(new BorderLayout());
-        //header.add(new JLabel("Hello, "+parent.getModel().getCurrentUser() + "!"), BorderLayout.WEST);
         header.add(getPromptLabel(), BorderLayout.WEST);
         header.add(getLogoutButton(), BorderLayout.EAST);
+        //header.setBackground(Color.decode(headerColor));
+        // боковая панель
+        JPanel center = new JPanel(new BorderLayout());
+        center.add(getMessagesListPanel(), BorderLayout.CENTER);
+        center.add(getUsersListPanel(), BorderLayout.EAST);
+        ////////////
         this.add(header, BorderLayout.NORTH);
-        this.add(getMessagesListPanel(), BorderLayout.CENTER);
+        this.add(center, BorderLayout.CENTER);
         this.add(getTextMessagePanel(), BorderLayout.SOUTH);
         InputMap im = getSendMessageButton().getInputMap();
         im.put(KeyStroke.getKeyStroke("ENTER"), "pressed");
@@ -77,38 +69,76 @@ public class ChatPanelView extends AbstractView {
         getTextMessageField().setText("");
     }
 
-    public void initModel(boolean getMessages) {
+    public void initModel(boolean getMessages){
         parent.getModel().setLastMessageText("");
-        if(getMessages) {
-            getMessagesTextPane().setText(parent.getModel().messagesToString());
-        }
-        getPromptLabel().setText("Hello, "+parent.getModel().getLoggedUser()+"!");
+        getPromptLabel().setText("Hello," + parent.getModel().getLoggedUser() + "!");
         getTextMessageField().requestFocusInWindow();
         parent.getRootPane().setDefaultButton(getSendMessageButton());
     }
 
-    public JLabel getPromptLabel() {
-        if (promptLabel == null) {
-            promptLabel = new JLabel("Hello, "+parent.getModel().getLoggedUser()+"!");
-        }
-        return promptLabel;
+    public void updateUsers(){
+        getUsersList().setModel(parent.getModel().getUsers());
+        getUsersList().setSelectedIndex(parent.getModel().getUsers().indexOf(parent.getModel().getCurrentUSer()));
     }
 
+
     public JScrollPane getMessagesListPanel() {
-        if(messagesListPanel== null) {
-            messagesListPanel = new JScrollPane(getMessagesTextPane());
-            messagesListPanel.setSize(getMaximumSize());
-            messagesListPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        if(messagesListPanel == null){
+             messagesListPanel = new JScrollPane(getMessagesTextPane());
+             messagesListPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         }
         return messagesListPanel;
     }
 
+    // added by me
+    public JScrollPane getUsersListPanel(){
+        if (usersListPanel == null){
+            usersListPanel = new JScrollPane(getUsersList());
+            usersListPanel.setSize(getMaximumSize());
+            usersListPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        }
+        return usersListPanel;
+    }
+
+    public JList getUsersList() {
+        if (usersList == null){
+            usersList = new JList(new DefaultListModel());
+            usersList.setFont(new Font("Times New Roman", Font.BOLD, 16));
+            //usersList.setBackground(Color.decode(usersListPaneColor));
+            //usersList.setForeground(Color.decode("#FFFFFF"));
+            usersList.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent evt) {
+                    JList list = (JList)evt.getSource();
+                    if (evt.getClickCount() == 1) {
+                        parent.getModel().setCurrentUSer(usersList.getSelectedValue().toString());
+                        showMessages();
+                    }
+                }
+            });
+            usersList.setFixedCellHeight(30);
+        }
+        return usersList;
+    }
+
+    public void showMessages(){
+        getMessagesTextPane().setText(parent.getModel().getFilteredStringOfMessages(parent.getModel().getMessages()));
+    }
+    //////////////
+
+    private JLabel getPromptLabel(){
+        if (promptLabel == null){
+            promptLabel = new JLabel("Hello," + parent.getModel().getLoggedUser() + "!");
+        }
+        return promptLabel;
+    }
+
     public JTextPane getMessagesTextPane() {
-        if(messagesTextPane == null) {
+        if (messagesTextPane == null){
             messagesTextPane = new JTextPane();
             messagesTextPane.setContentType("text/html");
             messagesTextPane.setEditable(false);
             messagesTextPane.setName("messagesTextArea");
+            //messagesTextPane.setBackground(Color.decode(messagesTextPaneColor));
             ((DefaultCaret)messagesTextPane.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         }
@@ -116,17 +146,18 @@ public class ChatPanelView extends AbstractView {
     }
 
     public JPanel getTextMessagePanel() {
-        if (textMessagePanel == null) {
+        if (textMessagePanel == null){
             textMessagePanel = new JPanel();
             textMessagePanel.setLayout(new BoxLayout(textMessagePanel, BoxLayout.X_AXIS));
-            addLabelField(textMessagePanel, "Enter message: ", getTextMessageField());
+            //textMessagePanel.setBackground(Color.decode(headerColor));
+            addLabeledField(textMessagePanel, "Enter message", getTextMessageField());
             textMessagePanel.add(getSendMessageButton());
         }
         return textMessagePanel;
     }
 
     public JButton getSendMessageButton() {
-        if(sendMessageButton == null) {
+        if (sendMessageButton == null){
             sendMessageButton = new JButton();
             sendMessageButton.setText("Send");
             sendMessageButton.setName("sendMessageButton");
@@ -137,7 +168,7 @@ public class ChatPanelView extends AbstractView {
     }
 
     public JTextField getTextMessageField() {
-        if(textMessageField == null) {
+        if (textMessageField == null){
             textMessageField = new JTextField(12);
             textMessageField.setName("textMessageField");
         }
@@ -145,7 +176,7 @@ public class ChatPanelView extends AbstractView {
     }
 
     public JButton getLogoutButton() {
-        if (logoutButton == null) {
+        if (logoutButton == null){
             logoutButton = new JButton();
             logoutButton.setText("Logout");
             logoutButton.setName("logoutButton");
@@ -154,4 +185,5 @@ public class ChatPanelView extends AbstractView {
         }
         return logoutButton;
     }
+
 }

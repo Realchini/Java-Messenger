@@ -21,7 +21,6 @@ import java.util.List;
 
 public class SendMessageCommand implements Command {
     final static Logger LOGGER = LogManager.getLogger(SendMessageCommand.class);
-
     private ChatMessengerAppl appl;
     private ChatPanelView panel;
     private InetAddress addr;
@@ -36,46 +35,49 @@ public class SendMessageCommand implements Command {
 
     @Override
     public void execute() {
-        try {
-            addr = InetAddress.getByName(appl.getModel().getServerIpAddress());
-            socket = new Socket(addr, ChatMessengerServer.PORT);
-            out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch(IOException e) {
-            LOGGER.error("Socket error: "+e.getMessage());
-        }
-        try {
-            String result;
-            do {
-                out.println(ServerThread.METHOD_PUT);
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder builder = factory.newDocumentBuilder();
-                Document document = builder.newDocument();
-                List<Message> messages = new ArrayList<>();
-                messages.add(
-                        Message.newMessage()
-                        .text(panel.getTextMessageField().getText())
-                        .from(appl.getModel().getLoggedUser())
-                        .to("")
-                        .moment(Calendar.getInstance())
-                        .build());
-                String xmlContent = MessageBuilder.buildDocument(document, messages);
-                out.println(xmlContent);
-                out.println(ServerThread.END_LINE_MESSAGE);
-                result = in.readLine();
-            } while(!"OK".equals(result));
-        } catch (IOException | ParserConfigurationException e) {
-            LOGGER.error("Send message error: "+e.getMessage());
-        } finally {
+        if (!panel.getTextMessageField().getText().equals("")) {
             try {
-                in.close();
-                out.close();
-                socket.close();
+                addr = InetAddress.getByName(appl.getModel().getServerIpAddress());
+                socket = new Socket(addr, ChatMessengerServer.PORT);
+                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             } catch (IOException e) {
-                LOGGER.error("Send massage error: "+e.getMessage());
+                LOGGER.error("Socket error" + e.getMessage());
+            }
+            String result;
+            try {
+                do {
+                    out.println(ServerThread.METHOD_PUT);
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    Document document = builder.newDocument();
+                    List<Message> messages = new ArrayList<>();
+                    messages.add(
+                            Message.newMessage().text(panel.getTextMessageField().getText())
+                                    .from(appl.getModel().getLoggedUser())
+                                    .to(appl.getModel().getCurrentUSer())
+                                    .moment(Calendar.getInstance())
+                                    .build()
+                    );
+                    String xmlContent = MessageBuilder.buildDocument(document, messages);
+                    out.println(xmlContent);
+                    out.println(ServerThread.END_LINE_MESSAGE);
+                    result = in.readLine();
+                }
+                while (!"OK".equals(result));
+            } catch (IOException | ParserConfigurationException e) {
+                LOGGER.error("Send message error" + e.getMessage());
+            } finally {
+                try {
+                    in.close();
+                    out.close();
+                    socket.close();
+                } catch (IOException e) {
+                    LOGGER.error("Socket error" + e.getMessage());
+                }
+                panel.getTextMessageField().setText("");
+                panel.getTextMessageField().requestFocus();
             }
         }
-        panel.getTextMessageField().setText("");
-        panel.getTextMessageField().requestFocus();
     }
 }
